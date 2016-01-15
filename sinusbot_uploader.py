@@ -123,7 +123,7 @@ if len(sys.argv) < 5:
 	sys.exit(1)
 else:
 	
-	if len(sys.argv) > 6:
+	if len(sys.argv) >= 7:
 		if sys.argv[6] == 'SSL':
 			bot = Sinusbot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], True)
 	else:
