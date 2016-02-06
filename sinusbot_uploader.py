@@ -67,18 +67,15 @@ class Sinusbot:
 			j = json.loads(response)
 			
 			try:
-				if j['success']: 
 					self.jwt_token = j['token']
 					conn.close()
 					self.username = ''
 					self.password = '' 
 					return True
 					
-				else:
-						conn.close()
-						return False
 				
-			except:
+			except:	
+					conn.close()
 					print 'Could not get token: %s' % (response)
 					return False
 			
