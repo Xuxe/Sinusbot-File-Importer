@@ -79,7 +79,7 @@ class Sinusbot:
 						return False
 				
 			except:
-					print 'Could not get token: %s' % response)
+					print 'Could not get token: %s' % (response)
 					return False
 			
 		
