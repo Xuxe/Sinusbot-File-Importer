@@ -63,8 +63,8 @@ class Sinusbot:
 		response = conn.getresponse()
 		
 		if response.status == 200:
-			
-			j = json.loads(str(response.read()))
+			response = str(response.read())
+			j = json.loads(response)
 			
 			try:
 				if j['success']: 
@@ -79,7 +79,7 @@ class Sinusbot:
 						return False
 				
 			except:
-					print 'Could not get token: %s' % (response.read())
+					print 'Could not get token: %s' % response)
 					return False
 			
 		
