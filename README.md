@@ -8,11 +8,13 @@ A CLI Tool to Import audio files via the HTTP API. Written in Python.
 
 # Result:
 
-xuxe@sinus:~$ sudo ./sinusbot_uploader.py 127.0.0.1 8087 admin foobar /home/xuxe/test/ <br/>
-Success Authenticated! <br/> 
-Success uploaded: /home/xuxe/test/Glowworm+-+Periphescence.mp3 <br/> 
-Success uploaded: /home/xuxe/test/Death+Grips+-+Come+Up+and+Get+Me.mp3 <br/>
-Success uploaded: /home/xuxe/test/The+Echelon+Effect+-+Your+First+Light+My+Eventide.mp3 <br/>
+xuxe@sinus:~$ python ./sinusbot_upload.py 127.0.0.1 8087 admin foobar /home/xuxe/test/ </br>
+Success Authenticated! </br>
+Success uploaded: /home/xuxe/test/The+Echelon+Effect+-+Your+First+Light+My+Eventide.mp3 </br>
+Success uploaded: /home/xuxe/test/subdir/Glowworm+-+Periphescence.mp3 </br>
+Success uploaded: /home/xuxe/test/subdir/Death+Grips+-+Come+Up+and+Get+Me.mp3 </br>
+Completed -> Uploaded 3 files with 0 errors. </br>
+
 
 
 SUPPORTED FILE TYPES: extensions=['mp3', 'mp4', 'wav', '3gp'] - i have added at the moment only mp3, mp4, wav and 3gp. If you need others you can add your own or report it and i will add it! 
