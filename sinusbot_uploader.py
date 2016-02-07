@@ -7,11 +7,11 @@ import httplib
 import os.path
 
 class Sinusbot:
-	jwt_token = ''
-	botId = ''
-	url = ''
-	port = 8087 #default Sinusbot Port
-	ssl = False #Disable SSL by default
+	jwt_token = '' 		#Auth Token
+	botId = ''			#Bot ID required for the Login
+	url = ''			#Base URL 
+	port = 8087 		#default Sinusbot Port
+	ssl = False #		Disable SSL by default
 	username = ''
 	password = ''
 	extensions=['mp3', 'mp4', 'wav', '3gp']
@@ -24,15 +24,15 @@ class Sinusbot:
 		self.password = password
 		self.botId = self.DefaultId()
 		
-	def DefaultId(self):
-	
+			
+	def DefaultId(self):		
+		
 		if self.ssl: 
 			conn = httplib.HTTPSConnection(self.url, self.port)
 		
 		else:
 			conn = httplib.HTTPConnection(self.url, self.port)
-		
-		
+			
 		conn.request("GET", "/api/v1/botId")
 		response = conn.getresponse()
 		
@@ -97,7 +97,7 @@ class Sinusbot:
 		except: 
 			print 'Could not read -> ' + LocalPath
 			return False
-			
+		
 		if self.ssl: 
 			conn = httplib.HTTPSConnection(self.url, self.port)
 		
@@ -120,7 +120,7 @@ class Sinusbot:
 	
 		
 		
-if len(sys.argv) < 5:
+if len(sys.argv) < 6:
 	print 'Usage: ./sinusbot_uploader.py 123.124.125.1 port username password LOCAL_DIRECTORY SSL(optional)'
 	sys.exit(1)
 else:
@@ -142,6 +142,8 @@ else:
 		
 		dir = os.path.abspath(sys.argv[5])
 		files = os.listdir(dir)
+		error_count = 0
+		success_count = 0
 		
 		for name in files:
 			filepath = os.path.join(dir, name)
@@ -153,11 +155,39 @@ else:
 					
 						if bot.Upload(filepath):
 							print 'Success uploaded: ' + filepath
+							success_count = success_count + 1
 						else:
 							print 'Error while uploading: ' + filepath
+							error_count = error_count + 1
 					else:
 						continue
-		
+			
+			if os.path.isdir(filepath):
+			
+				subdir = os.path.abspath(filepath)
+				subfiles = os.listdir(subdir)
+				
+				for subname in subfiles:
+					subfilepath = os.path.join(subdir, subname)
+					
+					if os.path.isfile(subfilepath):
+							
+							for ext in bot.extensions:
+							
+								if subfilepath.endswith(ext):
+										if bot.Upload(subfilepath):
+											print 'Success uploaded: ' + subfilepath
+											success_count = success_count + 1
+											
+										else:
+											print 'Error while uploading: ' + subfilepath
+											error_count = error_count + 1
+								else:
+										continue
+										
+										
+		print 'Completed -> Uploaded %d files with %d errors.' % (success_count, error_count)
+										
 	else:
 		print 'Error on Authentication!'
 		sys.exit(1)
