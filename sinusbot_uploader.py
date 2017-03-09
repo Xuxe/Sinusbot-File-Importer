@@ -14,6 +14,8 @@ class Sinusbot:
 	ssl = False #		Disable SSL by default
 	username = ''
 	password = ''
+	success_count = 0
+	error_count = 0
 	extensions=['mp3', 'mp4', 'wav', '3gp']
 	
 	def __init__(self, url, port, username, password, ssl):
@@ -23,6 +25,8 @@ class Sinusbot:
 		self.username = username
 		self.password = password
 		self.botId = self.DefaultId()
+		self.success_count = 0
+		self.error_count = 0
 		
 			
 	def DefaultId(self):		
@@ -112,22 +116,43 @@ class Sinusbot:
 		
 		if response.status == 200:
 			conn.close()
+			self.success_count += 1
 			return True
 		else:
 			conn.close()
+			self.error_count += 1
 			return False
 		
-	
+
+def uploadHelper(directory, bot, recurse):
+	truePath = os.path.abspath(directory)
+	contents = os.listdir(truePath)
+
+	for entry in contents:
+		entryTruePath = os.path.join(truePath, entry)
+		if os.path.isfile(entryTruePath):
+			fileExtension = entryTruePath.split('.')[-1]
+			if (fileExtension in bot.extensions):
+				if bot.Upload(entryTruePath):
+					print 'Success uploaded: ' + entryTruePath
+				else:
+					print 'Error while uploading: ' + entryTruePath
+			else:
+				print 'File type not supported: ' + entryTruePath
+		elif os.path.isdir(entryTruePath) and recurse:
+			uploadHelper(entryTruePath, bot, recurse)
 		
 		
 if len(sys.argv) < 6:
-	print 'Usage: ./sinusbot_uploader.py 123.124.125.1 port username password LOCAL_DIRECTORY SSL(optional)'
+	print 'Usage: ./sinusbot_uploader.py 123.124.125.1 port username password LOCAL_DIRECTORY SSL(optional) -R (Recursive)'
 	sys.exit(1)
 else:
-	
+	recursive = False
 	if len(sys.argv) >= 7:
 		if sys.argv[6] == 'SSL':
 			bot = Sinusbot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], True)
+		if sys.argv[6] == '-R' or sys.argv[7] == '-R':
+			recursive = True
 	else:
 			bot = Sinusbot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], False)
 			
@@ -142,51 +167,10 @@ else:
 		
 		dir = os.path.abspath(sys.argv[5])
 		files = os.listdir(dir)
-		error_count = 0
-		success_count = 0
-		
-		for name in files:
-			filepath = os.path.join(dir, name)
-			
-			if os.path.isfile(filepath):
-			
-				for ext in bot.extensions:
-					if filepath.endswith(ext):
-					
-						if bot.Upload(filepath):
-							print 'Success uploaded: ' + filepath
-							success_count = success_count + 1
-						else:
-							print 'Error while uploading: ' + filepath
-							error_count = error_count + 1
-					else:
-						continue
-			
-			if os.path.isdir(filepath):
-			
-				subdir = os.path.abspath(filepath)
-				subfiles = os.listdir(subdir)
-				
-				for subname in subfiles:
-					subfilepath = os.path.join(subdir, subname)
-					
-					if os.path.isfile(subfilepath):
-							
-							for ext in bot.extensions:
-							
-								if subfilepath.endswith(ext):
-										if bot.Upload(subfilepath):
-											print 'Success uploaded: ' + subfilepath
-											success_count = success_count + 1
-											
-										else:
-											print 'Error while uploading: ' + subfilepath
-											error_count = error_count + 1
-								else:
-										continue
+
+		uploadHelper(dir, bot, recurse)					
 										
-										
-		print 'Completed -> Uploaded %d files with %d errors.' % (success_count, error_count)
+		print 'Completed -> Uploaded %d files with %d errors.' % (bot.success_count, bot.error_count)
 										
 	else:
 		print 'Error on Authentication!'
