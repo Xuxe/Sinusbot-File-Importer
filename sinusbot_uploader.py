@@ -168,7 +168,7 @@ else:
 		dir = os.path.abspath(sys.argv[5])
 		files = os.listdir(dir)
 
-		uploadHelper(dir, bot, recurse)					
+		uploadHelper(dir, bot, recursive)					
 										
 		print 'Completed -> Uploaded %d files with %d errors.' % (bot.success_count, bot.error_count)
 										
